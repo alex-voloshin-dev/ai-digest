@@ -25,9 +25,10 @@ the source feeds. Output is reproducible, and every item links to its origin.
 
 | Path | Purpose |
 |------|---------|
-| `build_digest.py` | The whole pipeline: fetch, dedup, render. |
+| `build_digest.py` | The daily pipeline: fetch, dedup, render. |
+| `seed.py` | One-off backfill — populates the archive with the last 14 days. |
 | `sources.yaml` | The trusted-source list. Edit freely. |
-| `config.json` | Window size and fetch settings. |
+| `config.json` | Site title, author info, window and fetch settings. |
 | `digest_archive.jsonl` | Append-only history of every item ever included. |
 | `docs/index.html` | The generated page, served by GitHub Pages. |
 | `docs/CNAME` | Custom domain for GitHub Pages. |
@@ -45,6 +46,20 @@ the source feeds. Output is reproducible, and every item links to its origin.
 5. The workflow runs daily on the schedule in `digest.yml`; trigger it
    manually any time via **Actions → AI Digest → Run workflow**.
 
+## First run — seed the archive
+
+To launch with a full page instead of waiting for it to fill day by day,
+backfill the last 14 days once:
+
+```
+pip install feedparser pyyaml
+python seed.py
+```
+
+`seed.py` fetches every source with a wide lookback, dates each item by its
+real publication day, and writes a fresh `digest_archive.jsonl`. Run it once,
+review `docs/index.html`, then commit. After that the daily job takes over.
+
 ## Local run
 
 ```
@@ -58,6 +73,8 @@ This regenerates `docs/index.html` — open it in a browser to preview.
 
 - **Sources** — add or remove feeds in `sources.yaml`. Each run prints
   per-feed health, so broken feeds are easy to spot and prune.
+- **Author** — name, photo, and links live in `config.json`
+  (`author_name`, `author_avatar`, `author_links`).
 - **Window** — `window_days` in `config.json` controls how long entries stay
   on the page.
 - **Schedule** — edit the `cron` line in `.github/workflows/digest.yml`.

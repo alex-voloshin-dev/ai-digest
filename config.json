@@ -1,6 +1,13 @@
 {
   "site_title": "AI Digest",
   "site_tagline": "A daily roundup of AI news from a fixed list of trusted sources.",
+  "author_name": "Alex Voloshin",
+  "author_avatar": "https://cdn.hashnode.com/uploads/avatars/69ffa642f239332df4ffa118/d25b9659-f828-4ee9-9eb4-8af9d56b3239.png?w=200&h=200&fit=crop&crop=faces&auto=compress,format&format=webp",
+  "author_links": [
+    {"label": "voloshin.net", "url": "https://voloshin.net"},
+    {"label": "GitHub", "url": "https://github.com/alex-voloshin-dev"},
+    {"label": "LinkedIn", "url": ""}
+  ],
   "window_days": 14,
   "lookback_hours": 30,
   "max_items_per_source": 6

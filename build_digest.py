@@ -182,41 +182,84 @@ def select_new(candidates: list[dict], archive: list[dict]) -> list[dict]:
 # ---------------------------------------------------------------------------
 
 PAGE_CSS = """
-:root { color-scheme: light dark; }
-* { box-sizing: border-box; }
-body {
-  margin: 0;
-  font: 16px/1.6 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
-        Helvetica, Arial, sans-serif;
-  background: #ffffff;
-  color: #1a1a1a;
+:root {
+  --bg: #ffffff; --fg: #1a1a1a; --muted: #5f6772; --faint: #99a0aa;
+  --accent: #1a5fb4; --line: #e6e6e6; --chip: #f1f3f6;
 }
-main { max-width: 720px; margin: 0 auto; padding: 2.5rem 1.25rem 4rem; }
-header { border-bottom: 1px solid #e3e3e3; padding-bottom: 1.25rem;
-         margin-bottom: 1rem; }
-h1 { font-size: 1.7rem; margin: 0 0 .3rem; }
-.tagline { margin: .2rem 0; color: #555555; }
-.meta { margin: .4rem 0 0; font-size: .85rem; color: #888888; }
-h2 { font-size: 1.15rem; margin: 2rem 0 .25rem; }
-h3 { font-size: .78rem; text-transform: uppercase; letter-spacing: .05em;
-     color: #888888; margin: 1.25rem 0 .4rem; }
-ul { list-style: none; margin: 0; padding: 0; }
-li { margin: 0 0 .7rem; }
-a { color: #1a5fb4; text-decoration: none; font-weight: 600; }
-a:hover { text-decoration: underline; }
-.summary { color: #444444; font-weight: 400; }
-.source { color: #999999; font-size: .82rem; }
-footer { margin-top: 3rem; padding-top: 1.25rem;
-         border-top: 1px solid #e3e3e3; font-size: .82rem; color: #999999; }
-.empty { color: #888888; }
 @media (prefers-color-scheme: dark) {
-  body { background: #15171a; color: #e6e6e6; }
-  header, footer { border-color: #2c2f33; }
-  .tagline { color: #aaaaaa; }
-  .meta, h3, .source, footer, .empty { color: #7d8590; }
-  a { color: #6ab0ff; }
-  .summary { color: #c0c4c9; }
+  :root {
+    --bg: #14161a; --fg: #e7e9ec; --muted: #9aa3ad; --faint: #6b7480;
+    --accent: #6ab0ff; --line: #2a2e35; --chip: #21262d;
+  }
 }
+* { box-sizing: border-box; }
+html { color-scheme: light dark; }
+body {
+  margin: 0; background: var(--bg); color: var(--fg);
+  font: 16px/1.65 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+        Helvetica, Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+main { max-width: 720px; margin: 0 auto; padding: 3rem 1.25rem 4rem; }
+
+header { margin-bottom: 2rem; }
+h1 { font-size: 2rem; margin: 0 0 .35rem; letter-spacing: -.01em; }
+.tagline { margin: 0 0 1rem; color: var(--muted); font-size: 1.02rem; }
+.author { display: flex; align-items: center; gap: .85rem; margin: 0 0 1.1rem; }
+.avatar {
+  width: 48px; height: 48px; border-radius: 50%; flex-shrink: 0;
+  object-fit: cover; border: 1px solid var(--line);
+}
+.byline { margin: 0 0 .35rem; font-size: .92rem; color: var(--muted); }
+.byline strong { color: var(--fg); }
+.links { margin: 0; display: flex; flex-wrap: wrap; gap: .4rem; }
+.chip {
+  display: inline-block; padding: .22rem .66rem; font-size: .82rem;
+  font-weight: 600; background: var(--chip); color: var(--accent);
+  border-radius: 999px; text-decoration: none;
+}
+.chip:hover { text-decoration: underline; }
+.meta {
+  margin: 0; padding-top: .9rem; border-top: 1px solid var(--line);
+  font-size: .8rem; color: var(--faint);
+}
+
+.day { margin-top: 2.6rem; }
+.day h2 {
+  font-size: 1.3rem; margin: 0; display: flex; align-items: baseline;
+  gap: .6rem; flex-wrap: wrap;
+}
+.day h2 .count {
+  font-size: .72rem; font-weight: 700; color: var(--faint);
+  text-transform: uppercase; letter-spacing: .05em;
+}
+
+.cat { margin-top: 1.5rem; border-left: 2px solid var(--accent);
+       padding-left: 1.05rem; }
+.cat h3 {
+  margin: 0 0 .35rem; font-size: .75rem; font-weight: 700;
+  text-transform: uppercase; letter-spacing: .08em; color: var(--accent);
+}
+
+.item { padding: .8rem 0; border-bottom: 1px solid var(--line); }
+.item:last-child { border-bottom: none; padding-bottom: .1rem; }
+.title {
+  display: block; color: var(--fg); font-weight: 600; font-size: 1.05rem;
+  line-height: 1.4; text-decoration: none;
+}
+.title:hover { color: var(--accent); }
+.summary { margin: .3rem 0 .5rem; color: var(--muted); font-size: .92rem; }
+.source {
+  display: inline-block; font-size: .72rem; font-weight: 700;
+  text-transform: uppercase; letter-spacing: .05em; color: var(--faint);
+}
+
+footer {
+  margin-top: 3.5rem; padding-top: 1.25rem; border-top: 1px solid var(--line);
+  font-size: .8rem; color: var(--faint);
+}
+footer p { margin: 0; }
+.empty { color: var(--muted); }
 """
 
 
@@ -225,8 +268,47 @@ def _day_heading(day: str) -> str:
     return dt.strftime("%A, %B ") + str(dt.day) + dt.strftime(", %Y")
 
 
-def render_html(archive: list[dict], window_days: int, generated_at: datetime,
-                site_title: str, site_tagline: str) -> str:
+def _render_links(links: list[dict]) -> str:
+    chips: list[str] = []
+    for link in links or []:
+        url = (link.get("url") or "").strip()
+        if not url:
+            continue
+        label = link.get("label") or url
+        chips.append(
+            f'<a class="chip" href="{html.escape(url, quote=True)}" '
+            f'target="_blank" rel="noopener">{html.escape(label)}</a>'
+        )
+    return "".join(chips)
+
+
+def _render_author(cfg: dict) -> str:
+    name = cfg.get("author_name", "")
+    avatar_url = (cfg.get("author_avatar") or "").strip()
+    links = _render_links(cfg.get("author_links", []))
+    inner: list[str] = []
+    if name:
+        inner.append(f'<p class="byline">Curated by '
+                     f'<strong>{html.escape(name)}</strong></p>')
+    if links:
+        inner.append(f'<p class="links">{links}</p>')
+    if not inner:
+        return ""
+    avatar = ""
+    if avatar_url:
+        avatar = (f'<img class="avatar" '
+                  f'src="{html.escape(avatar_url, quote=True)}" '
+                  f'alt="{html.escape(name or "author")}" '
+                  f'width="48" height="48">')
+    return (f'<div class="author">{avatar}'
+            f'<div class="author-text">{"".join(inner)}</div></div>')
+
+
+def render_html(archive: list[dict], cfg: dict, generated_at: datetime) -> str:
+    window_days = int(cfg.get("window_days", 14))
+    site_title = cfg.get("site_title", "AI Digest")
+    site_tagline = cfg.get("site_tagline", "")
+
     cutoff = (generated_at - timedelta(days=window_days)).date().isoformat()
     by_day: dict[str, list[dict]] = {}
     for record in archive:
@@ -234,42 +316,50 @@ def render_html(archive: list[dict], window_days: int, generated_at: datetime,
         if day and day >= cutoff:
             by_day.setdefault(day, []).append(record)
 
-    parts: list[str] = []
+    sections: list[str] = []
     if not by_day:
-        parts.append('<p class="empty">No items yet. The first run will '
-                     'populate this page.</p>')
-    else:
-        for day in sorted(by_day, reverse=True):
-            parts.append('<section class="day">')
-            parts.append(f"<h2>{html.escape(_day_heading(day))}</h2>")
-            day_items = by_day[day]
-            categories = sorted(
-                {item.get("category", "Other") for item in day_items},
-                key=lambda c: CATEGORY_ORDER.index(c)
-                if c in CATEGORY_ORDER else len(CATEGORY_ORDER),
-            )
-            for category in categories:
-                parts.append(f"<h3>{html.escape(category)}</h3>")
-                parts.append("<ul>")
-                for item in day_items:
-                    if item.get("category", "Other") != category:
-                        continue
-                    title = html.escape(item["title"])
-                    url = html.escape(item["url"], quote=True)
-                    source = html.escape(item["source"])
-                    summary = html.escape(item.get("summary", ""))
-                    summary_html = (f' <span class="summary">{summary}</span>'
-                                    if summary else "")
-                    parts.append(
-                        f'<li><a href="{url}" target="_blank" '
-                        f'rel="noopener">{title}</a>{summary_html} '
-                        f'<span class="source">{source}</span></li>'
-                    )
-                parts.append("</ul>")
-            parts.append("</section>")
+        sections.append('<p class="empty">No items yet — the next run will '
+                        'populate this page.</p>')
+    for day in sorted(by_day, reverse=True):
+        day_items = by_day[day]
+        count = len(day_items)
+        unit = "item" if count == 1 else "items"
+        blocks = ['<div class="day">',
+                  f'<h2>{html.escape(_day_heading(day))}'
+                  f'<span class="count">{count} {unit}</span></h2>']
+        categories = sorted(
+            {item.get("category", "Other") for item in day_items},
+            key=lambda c: CATEGORY_ORDER.index(c)
+            if c in CATEGORY_ORDER else len(CATEGORY_ORDER),
+        )
+        for category in categories:
+            blocks.append('<section class="cat">')
+            blocks.append(f'<h3>{html.escape(category)}</h3>')
+            for item in day_items:
+                if item.get("category", "Other") != category:
+                    continue
+                title = html.escape(item["title"])
+                url = html.escape(item["url"], quote=True)
+                source = html.escape(item["source"])
+                summary = html.escape(item.get("summary", ""))
+                summary_html = (f'<p class="summary">{summary}</p>'
+                                if summary else "")
+                blocks.append(
+                    f'<article class="item">'
+                    f'<a class="title" href="{url}" target="_blank" '
+                    f'rel="noopener">{title}</a>'
+                    f'{summary_html}'
+                    f'<span class="source">{source}</span>'
+                    f'</article>'
+                )
+            blocks.append('</section>')
+        blocks.append('</div>')
+        sections.append("\n".join(blocks))
 
-    body = "\n".join(parts)
+    body = "\n".join(sections)
     updated = generated_at.strftime("%Y-%m-%d %H:%M")
+    author_block = _render_author(cfg)
+
     return f"""<!DOCTYPE html>
 <html lang="en">
 <head>
@@ -284,12 +374,15 @@ def render_html(archive: list[dict], window_days: int, generated_at: datetime,
 <header>
 <h1>{html.escape(site_title)}</h1>
 <p class="tagline">{html.escape(site_tagline)}</p>
-<p class="meta">Rolling {window_days}-day window &middot; last updated \
+{author_block}
+<p class="meta">Rolling {window_days}-day window &middot; updated \
 {updated} UTC</p>
 </header>
 {body}
-<footer>Automated, unattended news page. Built deterministically from a fixed
-list of trusted source feeds; every item links to its origin.</footer>
+<footer>
+<p>Automated, unattended news page. Built deterministically from a fixed list
+of trusted source feeds; every item links to its origin.</p>
+</footer>
 </main>
 </body>
 </html>
@@ -309,8 +402,6 @@ def main() -> None:
     lookback = int(cfg.get("lookback_hours", 30))
     max_per_source = int(cfg.get("max_items_per_source", 6))
     window = int(cfg.get("window_days", 14))
-    site_title = cfg.get("site_title", "AI Digest")
-    site_tagline = cfg.get("site_tagline", "A daily roundup of AI news.")
 
     print(f"AI Digest run -- {now_utc().strftime('%Y-%m-%d %H:%M UTC')}")
     print(f"Fetching {len(sources)} sources:")
@@ -330,7 +421,7 @@ def main() -> None:
         append_archive(fresh)
         archive.extend(fresh)
 
-    page = render_html(archive, window, now_utc(), site_title, site_tagline)
+    page = render_html(archive, cfg, now_utc())
     OUTPUT_PATH.parent.mkdir(parents=True, exist_ok=True)
     OUTPUT_PATH.write_text(page, encoding="utf-8")
 
