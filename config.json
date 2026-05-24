@@ -1,0 +1,7 @@
+{
+  "site_title": "AI Digest",
+  "site_tagline": "A daily roundup of AI news from a fixed list of trusted sources.",
+  "window_days": 14,
+  "lookback_hours": 30,
+  "max_items_per_source": 6
+}

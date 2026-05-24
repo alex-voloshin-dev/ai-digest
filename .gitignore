@@ -1,0 +1,7 @@
+secrets.local.json
+__pycache__/
+*.pyc
+.DS_Store
+.claude/
+.ai-assets-memory/
+_mounttest.txt

@@ -1,0 +1,61 @@
+# Trusted sources for the AI Digest.
+#
+# Edit freely. Every daily run prints a per-feed health line in the log,
+# so anything that fails is easy to spot, fix, or remove.
+#
+# "category" controls grouping on the page. Use one of:
+#   Labs & vendors | Agentic-dev tooling | News & analysis | Research & curators
+# Any other value is grouped under "Other".
+#
+# Feed health was checked against the first run on 2026-05-24.
+
+sources:
+  # --- Labs & vendors ---------------------------------------------------
+  - name: OpenAI
+    category: Labs & vendors
+    url: https://openai.com/news/rss.xml
+
+  # Anthropic publishes no official RSS feed. This is a community-maintained
+  # mirror on raw GitHub — reliable hosting; swap it if it ever goes stale.
+  - name: Anthropic
+    category: Labs & vendors
+    url: https://raw.githubusercontent.com/taobojlen/anthropic-rss-feed/main/anthropic_news_rss.xml
+
+  - name: Google DeepMind
+    category: Labs & vendors
+    url: https://deepmind.google/blog/rss.xml
+
+  - name: Hugging Face
+    category: Labs & vendors
+    url: https://huggingface.co/blog/feed.xml
+
+  # --- Agentic-dev tooling ----------------------------------------------
+  - name: Simon Willison
+    category: Agentic-dev tooling
+    url: https://simonwillison.net/atom/everything/
+
+  - name: GitHub Blog
+    category: Agentic-dev tooling
+    url: https://github.blog/feed/
+
+  # --- News & analysis --------------------------------------------------
+  - name: TechCrunch AI
+    category: News & analysis
+    url: https://techcrunch.com/category/artificial-intelligence/feed/
+
+  - name: VentureBeat AI
+    category: News & analysis
+    url: https://venturebeat.com/category/ai/feed/
+
+  # --- Research & curators ----------------------------------------------
+  - name: Import AI
+    category: Research & curators
+    url: https://importai.substack.com/feed
+
+# Disabled — re-enable by moving an entry back under "sources:".
+#   - Mistral AI    mistral.ai/news has no RSS (community feeds exist)
+#   - LangChain     blog.langchain.dev RSS no longer resolves
+#   - The Batch     deeplearning.ai/the-batch has no native RSS
+#   - Hacker News   hnrss.org/frontpage is not AI-filtered (too much
+#                   off-topic noise); needs a tuned query feed such as
+#                   https://hnrss.org/newest?q=AI&points=100
