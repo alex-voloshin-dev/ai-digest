@@ -203,6 +203,11 @@ body {
 main { max-width: 720px; margin: 0 auto; padding: 3rem 1.25rem 4rem; }
 
 header { margin-bottom: 2rem; }
+.brand {
+  display: inline-block; margin: 0 0 1.4rem;
+  color: var(--fg); line-height: 0;
+}
+.brand svg { display: block; height: 36px; width: auto; }
 h1 { font-size: 2rem; margin: 0 0 .35rem; letter-spacing: -.01em; }
 .tagline { margin: 0 0 1rem; color: var(--muted); font-size: 1.02rem; }
 .author { display: flex; align-items: center; gap: .85rem; margin: 0 0 1.1rem; }
@@ -262,6 +267,40 @@ footer p { margin: 0; }
 .empty { color: var(--muted); }
 """
 
+# Inline brand SVG -- transparent background, `currentColor` for the AV>
+# glyphs so they adapt to the theme; brand blue (#4AA3FF) for `ai_`.
+BRAND_SVG = (
+    '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 580.14 226.58" '
+    'role="img" aria-label="AV>ai_">'
+    '<g transform="translate(50.000,50.000) scale(0.136986) '
+    'translate(-35.000,786.000) scale(1,-1)">'
+    '<path d="M219 0 35 730H164L275 254Q284 219 291.5 178.5Q299 138 303 114'
+    'Q307 138 314.5 178.5Q322 219 331 255L438 730H565L381 0Z" '
+    'fill="currentColor" '
+    'transform="translate(0,0) matrix(1 0 0 -1 0 730)"/>'
+    '<path d="M219 0 35 730H164L275 254Q284 219 291.5 178.5Q299 138 303 114'
+    'Q307 138 314.5 178.5Q322 219 331 255L438 730H565L381 0Z" '
+    'fill="currentColor" transform="translate(600,0)"/>'
+    '<path d="M76 56V171L366 305Q386 314 405.5 320.0Q425 326 436 329'
+    'Q425 331 405.0 337.0Q385 343 366 351L76 486V603L524 392V267Z" '
+    'fill="currentColor" transform="translate(1200,0)"/>'
+    '<path d="M239 -10Q155 -10 106.5 37.5Q58 85 58 162Q58 242 113.0 289.5'
+    'Q168 337 264 337H398V376Q398 459 301 459Q257 459 231.0 442.0'
+    'Q205 425 202 394H82Q86 468 144.5 514.0Q203 560 302 560'
+    'Q407 560 465.0 511.0Q523 462 523 373V0H401V103Q394 50 351.0 20.0'
+    'Q308 -10 239 -10ZM279 92Q334 92 366.0 119.0Q398 146 398 191V256'
+    'H270Q229 256 205.0 233.0Q181 210 181 174Q181 137 206.5 114.5'
+    'Q232 92 279 92Z" fill="#4AA3FF" transform="translate(1800,0)"/>'
+    '<path d="M76 0V113H264V437H96V550H389V113H558V0ZM318 642'
+    'Q280 642 258.0 661.5Q236 681 236 714Q236 747 258.0 766.5'
+    'Q280 786 318 786Q356 786 378.0 766.5Q400 747 400 714'
+    'Q400 681 378.0 661.5Q356 642 318 642Z" '
+    'fill="#4AA3FF" transform="translate(2400,0)"/>'
+    '<path d="M60 -138V-25H540V-138Z" '
+    'fill="#4AA3FF" transform="translate(3000,0)"/>'
+    '</g></svg>'
+)
+
 
 def _day_heading(day: str) -> str:
     dt = datetime.strptime(day, "%Y-%m-%d")
@@ -318,8 +357,8 @@ def render_html(archive: list[dict], cfg: dict, generated_at: datetime) -> str:
 
     sections: list[str] = []
     if not by_day:
-        sections.append('<p class="empty">No items yet — the next run will '
-                        'populate this page.</p>')
+        sections.append('<p class="empty">No items yet — the next run '
+                        'will populate this page.</p>')
     for day in sorted(by_day, reverse=True):
         day_items = by_day[day]
         count = len(day_items)
@@ -367,11 +406,16 @@ def render_html(archive: list[dict], cfg: dict, generated_at: datetime) -> str:
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>{html.escape(site_title)}</title>
 <meta name="description" content="{html.escape(site_tagline)}">
+<link rel="icon" type="image/svg+xml" href="assets/favicon.svg">
+<link rel="alternate icon" type="image/x-icon" href="assets/favicon.ico">
+<link rel="apple-touch-icon" sizes="180x180" href="assets/apple-touch-icon.png">
 <style>{PAGE_CSS}</style>
 </head>
 <body>
 <main>
 <header>
+<a class="brand" href="https://voloshin.net" aria-label="Alex Voloshin">\
+{BRAND_SVG}</a>
 <h1>{html.escape(site_title)}</h1>
 <p class="tagline">{html.escape(site_tagline)}</p>
 {author_block}
