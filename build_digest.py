@@ -203,11 +203,24 @@ body {
 main { max-width: 720px; margin: 0 auto; padding: 3rem 1.25rem 4rem; }
 
 header { margin-bottom: 2rem; }
-.brand {
-  display: inline-block; margin: 0 0 1.4rem;
-  color: var(--fg); line-height: 0;
+.topbar {
+  display: flex; align-items: center; justify-content: space-between;
+  gap: 1.25rem; flex-wrap: wrap; margin: 0 0 1.4rem;
+  padding-bottom: 1rem; border-bottom: 1px solid var(--line);
 }
-.brand svg { display: block; height: 36px; width: auto; }
+.brand {
+  display: inline-block; color: var(--fg); line-height: 0;
+}
+.brand svg { display: block; height: 32px; width: auto; }
+.nav {
+  display: flex; gap: 1.1rem; flex-wrap: wrap; align-items: center;
+  font-size: .92rem;
+}
+.nav a {
+  font-weight: 600; color: var(--fg); text-decoration: none;
+  opacity: .8;
+}
+.nav a:hover { color: var(--accent); opacity: 1; }
 h1 { font-size: 2rem; margin: 0 0 .35rem; letter-spacing: -.01em; }
 .tagline { margin: 0 0 1rem; color: var(--muted); font-size: 1.02rem; }
 .author { display: flex; align-items: center; gap: .85rem; margin: 0 0 1.1rem; }
@@ -324,15 +337,12 @@ def _render_links(links: list[dict]) -> str:
 def _render_author(cfg: dict) -> str:
     name = cfg.get("author_name", "")
     avatar_url = (cfg.get("author_avatar") or "").strip()
-    links = _render_links(cfg.get("author_links", []))
-    inner: list[str] = []
-    if name:
-        inner.append(f'<p class="byline">Curated by '
-                     f'<strong>{html.escape(name)}</strong></p>')
-    if links:
-        inner.append(f'<p class="links">{links}</p>')
-    if not inner:
+    if not name and not avatar_url:
         return ""
+    byline = ""
+    if name:
+        byline = (f'<p class="byline">Curated by '
+                  f'<strong>{html.escape(name)}</strong></p>')
     avatar = ""
     if avatar_url:
         avatar = (f'<img class="avatar" '
@@ -340,7 +350,26 @@ def _render_author(cfg: dict) -> str:
                   f'alt="{html.escape(name or "author")}" '
                   f'width="48" height="48">')
     return (f'<div class="author">{avatar}'
-            f'<div class="author-text">{"".join(inner)}</div></div>')
+            f'<div class="author-text">{byline}</div></div>')
+
+
+def _render_nav(cfg: dict) -> str:
+    """Top-of-page navigation links, drawn from cfg['author_links'].
+
+    Empty-URL entries (placeholder rows in config) are skipped silently."""
+    items: list[str] = []
+    for link in cfg.get("author_links", []) or []:
+        url = (link.get("url") or "").strip()
+        if not url:
+            continue
+        label = link.get("label") or url
+        items.append(
+            f'<a href="{html.escape(url, quote=True)}" target="_blank" '
+            f'rel="noopener">{html.escape(label)}</a>'
+        )
+    if not items:
+        return ""
+    return f'<nav class="nav">{"".join(items)}</nav>'
 
 
 def render_html(archive: list[dict], cfg: dict, generated_at: datetime) -> str:
@@ -398,6 +427,7 @@ def render_html(archive: list[dict], cfg: dict, generated_at: datetime) -> str:
     body = "\n".join(sections)
     updated = generated_at.strftime("%Y-%m-%d %H:%M")
     author_block = _render_author(cfg)
+    nav_block = _render_nav(cfg)
 
     return f"""<!DOCTYPE html>
 <html lang="en">
@@ -414,8 +444,11 @@ def render_html(archive: list[dict], cfg: dict, generated_at: datetime) -> str:
 <body>
 <main>
 <header>
+<div class="topbar">
 <a class="brand" href="https://voloshin.net" aria-label="Alex Voloshin">\
 {BRAND_SVG}</a>
+{nav_block}
+</div>
 <h1>{html.escape(site_title)}</h1>
 <p class="tagline">{html.escape(site_tagline)}</p>
 {author_block}
